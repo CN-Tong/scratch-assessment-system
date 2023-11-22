@@ -14,27 +14,18 @@ CORS(app)  # 启用CORS，允许所有来源访问
 def acquireImage():
     print('start image acquisition')
     try:
+        subprocess.run(['python', 'ImgAcquisition.py'], check=True)
         subprocess.run(['python', 'ImgFusion.py'], check=True)
+        subprocess.run(['python', 'ImgEnhancement.py'], check=True)
         return "Image acquisition successful"
     except subprocess.CalledProcessError as e:
         return f"Error: {e}"
-
-
-# @app.route('/scratch/enhance', methods=['POST'])
-# def enhanceImage():
-#     print('start image enhancement')
-#     try:
-#         subprocess.run(['python', 'ImgEnhancement.py'], check=True)
-#         return "Image acquisition successful"
-#     except subprocess.CalledProcessError as e:
-#         return f"Error: {e}"
 
 
 @app.route('/scratch/detect', methods=['POST'])
 def detectScratch():
     print('start scratch detection')
     try:
-        subprocess.run(['python', 'ImgEnhancement.py'], check=True)
         subprocess.run(['python', 'WeakScratchDetection.py'], check=True)
         return "Image acquisition successful"
     except subprocess.CalledProcessError as e:
