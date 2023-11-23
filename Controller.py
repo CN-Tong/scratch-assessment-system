@@ -1,4 +1,3 @@
-import os
 import subprocess
 
 from flask import Flask, render_template
