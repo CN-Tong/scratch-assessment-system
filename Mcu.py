@@ -51,7 +51,7 @@ def sendStop():
 def sendUp():
     if (ser.isOpen()):
         # [1]00停止 [1]01非采集正方向移动 [1]02[5]00非采集负方向移动 [1]02[5]01采集负方向移动
-        send_data = [0xAA, 0x01, 0x64, 0x00, 0x01, 0x01, 0xcc]
+        send_data = [0xAA, 0x01, 0x64, 0x00, 0x01, 0x00, 0xcc]
 
         ser.write(bytes(send_data))  # 编码
         print("发送成功", send_data)
