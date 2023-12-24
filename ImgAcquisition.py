@@ -76,9 +76,8 @@ class ImgAcquisition:
 
                 # 此时图片已经存储在pFrameBuffer中，对于彩色相机pFrameBuffer=RGB数据，黑白相机pFrameBuffer=8位灰度数据
                 # 该示例中我们只是把图片保存到硬盘文件中
-                status = mvsdk.CameraSaveImage(hCamera, f"./results/{currentTime}/original/{i}.bmp", pFrameBuffer, FrameHead,
-                                               mvsdk.FILE_BMP,
-                                               100)
+                status = mvsdk.CameraSaveImage(hCamera, f"./static/pages/results/{currentTime}/original/{i}.bmp",
+                                               pFrameBuffer, FrameHead, mvsdk.FILE_BMP,100)
                 if status == mvsdk.CAMERA_STATUS_SUCCESS:
                     print("Save image successfully. image_size = {}X{}".format(FrameHead.iWidth, FrameHead.iHeight))
                 else:

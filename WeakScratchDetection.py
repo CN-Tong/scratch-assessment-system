@@ -266,7 +266,7 @@ class Detection():
             x1 = int(dline[2])
             y1 = int(dline[3])
             cv2.line(temp1, (x0, y0), (x1, y1), (0, 0, 255), 2)
-        cv2.imwrite(f'{fine_detection_name}Fld.jpg', temp1)
+        cv2.imwrite(f'{fine_detection_name}/fld.jpg', temp1)
         # 去除长度小于阈值的直线段
         # for line_point in line_result:
         #     line_length = np.sqrt((line_point[0]-line_point[2])**2+(line_point[1]-line_point[3])**2)
@@ -319,8 +319,8 @@ class Detection():
                 y1 = int(line_in_group[3])
                 cv2.line(merge, (x0, y0), (x1, y1), (0, 0, 255), 2, cv2.LINE_AA)
                 cv2.line(temp2, (x0, y0), (x1, y1), (0, 0, 255), 2, cv2.LINE_AA)
-        cv2.imwrite(f'{fine_detection_name}Merge.jpg', merge)
-        cv2.imwrite(f'{fine_detection_name}Result.jpg', temp2)
+        cv2.imwrite(f'{fine_detection_name}/merge.jpg', merge)
+        cv2.imwrite(f'{fine_detection_name}/result.jpg', temp2)
 
         """step2：根据第一步的结果设置ROI区域并将区域外点和线段丢弃"""
         # print("step 2")
@@ -480,13 +480,13 @@ class Detection():
 
 
 # path = '../img'
-path = 'D:\image'
-srcName = '/eh'
-srcType = '.jpg'
-T1, T2, T3, T4 = 5, 1, 60, 5
-scratchWide = 3
-theta, d, g = 10, 3, 20
-detection = Detection(path + srcName + srcType, T1, T2, T3, T4)
-detection.Coarse_Detection(path + srcName + 'Coarse.jpg', scratchWide)
-detection.Fine_Detection(path + srcName + 'Coarse.jpg', path + srcName + srcType, path + srcName, theta, d, g)
+# path = 'D:\image'
+# srcName = '/eh'
+# srcType = '.jpg'
+# T1, T2, T3, T4 = 5, 1, 60, 5
+# scratchWide = 3
+# theta, d, g = 10, 3, 20
+# detection = Detection(path + srcName + srcType, T1, T2, T3, T4)
+# detection.Coarse_Detection(path + srcName + 'Coarse.jpg', scratchWide)
+# detection.Fine_Detection(path + srcName + 'Coarse.jpg', path + srcName + srcType, path + srcName, theta, d, g)
 

@@ -39,9 +39,9 @@
             <div class="box">
 
                 <div style="display: flex; justify-content: space-between;" v-bind:path="path">
-                    <img v-bind:src="path + '/original/0.bmp'" style="width: 35%; margin-left: 8%">
+                    <img :src="fusionPath" style="width: 35%; margin-left: 8%">
 
-                    <img v-bind:src="path + '/result/0.bmp'" style="width: 35%; margin-right: 8%">
+                    <img :src="resultPath" style="width: 35%; margin-right: 8%">
                 </div>
 
             </div>
@@ -70,26 +70,30 @@
             <el-main style="background-color: #fff;">
 
                 <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag style="font-size: 16px">划痕总覆盖率&emsp;&emsp;</el-tag>
-                    <el-progress :stroke-width="30" :percentage="50" :show-text="false" style="flex: 1;"></el-progress>
+                    <el-tag style="font-size: 16px">划痕总覆盖率&emsp;&emsp;&emsp;</el-tag>
+                    <el-progress :stroke-width="30" :percentage="areaTotalRitio" :show-text="false"
+                        style="flex: 1;"></el-progress>
                 </div>
                 <br>
 
                 <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag type="success" style="font-size: 16px">最大划痕覆盖率&emsp;</el-tag>
-                    <el-progress :stroke-width="30" :percentage="40" :show-text="false" style="flex: 1;"
+                    <el-tag type="success" style="font-size: 16px">最大划痕覆盖率&emsp;&emsp;</el-tag>
+                    <el-progress :stroke-width="30" :percentage="maxAreaRitio" :show-text="false" style="flex: 1;"
                         status="success"></el-progress>
                 </div>
                 <br>
 
                 <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag type="danger" style="font-size: 16px">最大划痕相对长度</el-tag>
-                    <el-progress :stroke-width="30" :percentage="70" :show-text="false" style="flex: 1;"></el-progress>
+                    <el-tag type="danger" style="font-size: 16px">最大划痕相对长度&emsp;</el-tag>
+                    <el-progress :stroke-width="30" :percentage="maxLengthRitio" :show-text="false"
+                        style="flex: 1;"></el-progress>
                 </div>
                 <br>
 
-                <div style="display: flex; width: 50%; padding-left: 46%">
-                    <el-button type="danger" round style="font-size: 24px">1级</el-button>
+                <div style="display: flex; width: 90%; padding-left: 5%">
+                    <el-tag type="danger" style="font-size: 16px">角膜塑形镜划痕等级</el-tag>
+                    <el-progress :stroke-width="30" :percentage="grade" :show-text="false"
+                        style="flex: 1;"></el-progress>
                 </div>
 
 
@@ -99,7 +103,7 @@
 
                 <div style="display: flex; align-items: center; height: 20vh">
                     <el-tag effect="dark">
-                        <a v-bind:href="path" target="_blank">打开文件所在位置</a>
+                        <a :href="resultPath" target="_blank">打开文件所在位置</a>
                     </el-tag>
                 </div>
 
@@ -128,8 +132,12 @@
 
         el: '#app',
         data: {
-            path: "",
-            grade: 0,
+            fusionPath: "",
+            resultPath: "",
+            areaTotalRitio: "",
+            maxAreaRitio: "",
+            maxLengthRitio: "",
+            grade: ""
         },
 
         //钩子函数，VUE对象初始化完成后自动执行
@@ -140,25 +148,36 @@
         methods: {
             acquireImage() {
                 const backendUrl = 'http://127.0.0.1:5000';
-
                 axios.post(backendUrl + "/scratch/acquire").then((res) => {
-                    this.path = res.data;
+                    this.fusionPath = res.data;
+                    refresh;
                 });
             },
 
             detectScratch() {
                 const backendUrl = 'http://127.0.0.1:5000';
-
                 axios.post(backendUrl + "/scratch/detect").then((res) => {
-
+                    this.resultPath = res.data;
+                    refresh;
                 });
             },
 
             evaluateOkLens() {
-                axios.post("/scratch/evaluate").then((res) => {
-                    this.grade = res.data;
+                const backendUrl = 'http://127.0.0.1:5000';
+                axios.post(backendUrl + "/scratch/evaluate").then((res) => {
+                    this.areaTotalRitio = res.data[0];
+                    this.maxAreaRitio = res.data[1];
+                    this.maxLengthRitio = res.data[2];
+                    this.grade = res.data[3];
+                    refresh;
                 });
             },
+
+
+            refresh() {
+                location.reload();
+            },
+
         }
     })
 
