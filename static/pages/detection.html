@@ -26,93 +26,93 @@
 
 <body class="hold-transition">
 
-    <div id="app">
+<div id="app">
 
-        <div class="content-header">
+    <div class="content-header">
 
-            <h1 style="text-align: center;font-size: 32px">角膜塑形镜表面划痕智能评估系统</h1>
+        <h1 style="text-align: center;font-size: 32px">角膜塑形镜表面划痕智能评估系统</h1>
 
-        </div>
+    </div>
 
-        <div class="app-container">
+    <div class="app-container">
 
-            <div class="box">
+        <div class="box">
 
-                <div style="display: flex; justify-content: space-between;" v-bind:path="path">
-                    <img :src="fusionPath" style="width: 35%; margin-left: 8%">
+            <div style="display: flex; justify-content: space-between;">
+                <img :src="fusionPath" style="width: 35%; margin-left: 8%">
 
-                    <img :src="resultPath" style="width: 35%; margin-right: 8%">
-                </div>
-
+                <img :src="resultPath" style="width: 35%; margin-right: 8%">
             </div>
 
         </div>
 
-        <el-container>
-            <el-aside width="20%">
-
-                <div style="margin-left: 60%">
-                    <el-button @click="acquireImage()" type="warning" round style="font-size: 16px">采集图像</el-button>
-                </div>
-                <br>
-
-                <div style="margin-left: 60%">
-                    <el-button @click="detectScratch()" type="warning" round style="font-size: 16px">划痕检测</el-button>
-                </div>
-                <br>
-
-                <div style="margin-left: 60%">
-                    <el-button @click="evaluateOkLens()" type="warning" round style="font-size: 16px">结果评估</el-button>
-                </div>
-
-            </el-aside>
-
-            <el-main style="background-color: #fff;">
-
-                <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag style="font-size: 16px">划痕总覆盖率&emsp;&emsp;&emsp;</el-tag>
-                    <el-progress :stroke-width="30" :percentage="areaTotalRitio" :show-text="false"
-                        style="flex: 1;"></el-progress>
-                </div>
-                <br>
-
-                <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag type="success" style="font-size: 16px">最大划痕覆盖率&emsp;&emsp;</el-tag>
-                    <el-progress :stroke-width="30" :percentage="maxAreaRitio" :show-text="false" style="flex: 1;"
-                        status="success"></el-progress>
-                </div>
-                <br>
-
-                <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag type="danger" style="font-size: 16px">最大划痕相对长度&emsp;</el-tag>
-                    <el-progress :stroke-width="30" :percentage="maxLengthRitio" :show-text="false"
-                        style="flex: 1;"></el-progress>
-                </div>
-                <br>
-
-                <div style="display: flex; width: 90%; padding-left: 5%">
-                    <el-tag type="danger" style="font-size: 16px">角膜塑形镜划痕等级</el-tag>
-                    <el-progress :stroke-width="30" :percentage="grade" :show-text="false"
-                        style="flex: 1;"></el-progress>
-                </div>
-
-
-            </el-main>
-
-            <el-aside width="20%">
-
-                <div style="display: flex; align-items: center; height: 20vh">
-                    <el-tag effect="dark">
-                        <a :href="resultPath" target="_blank">打开文件所在位置</a>
-                    </el-tag>
-                </div>
-
-            </el-aside>
-
-        </el-container>
-
-
     </div>
+
+    <el-container>
+        <el-aside width="20%">
+
+            <div style="margin-left: 60%">
+                <el-button @click="acquireImage()" type="warning" round style="font-size: 16px">采集图像</el-button>
+            </div>
+            <br>
+
+            <div style="margin-left: 60%">
+                <el-button @click="detectScratch()" type="warning" round style="font-size: 16px">划痕检测</el-button>
+            </div>
+            <br>
+
+            <div style="margin-left: 60%">
+                <el-button @click="evaluateOkLens()" type="warning" round style="font-size: 16px">结果评估</el-button>
+            </div>
+
+        </el-aside>
+
+        <el-main style="background-color: #fff;">
+
+            <div style="display: flex; width: 90%; padding-left: 5%">
+                <el-tag style="font-size: 16px">划痕总覆盖率&emsp;&emsp;&emsp;</el-tag>
+                <el-progress :stroke-width="30" :percentage="areaTotalRitio" :show-text="true" text-inside="true"
+                             style="flex: 1;"></el-progress>
+            </div>
+            <br>
+
+            <div style="display: flex; width: 90%; padding-left: 5%">
+                <el-tag type="success" style="font-size: 16px">最大划痕覆盖率&emsp;&emsp;</el-tag>
+                <el-progress :stroke-width="30" :percentage="maxAreaRitio" :show-text="true" text-inside="true"
+                             style="flex: 1;"></el-progress>
+            </div>
+            <br>
+
+            <div style="display: flex; width: 90%; padding-left: 5%">
+                <el-tag type="warning" style="font-size: 16px">最大划痕相对长度&emsp;</el-tag>
+                <el-progress :stroke-width="30" :percentage="maxLengthRitio" :show-text="true" text-inside="true"
+                             style="flex: 1;"></el-progress>
+            </div>
+            <br>
+
+            <div style="display: flex; width: 90%; padding-left: 5%">
+                <el-tag type="danger" style="font-size: 16px">角膜塑形镜划痕等级</el-tag>
+                <el-progress :stroke-width="30" :percentage="grade" :show-text="true" text-inside="true"
+                             style="flex: 1;"></el-progress>
+            </div>
+
+
+        </el-main>
+
+        <el-aside width="20%">
+
+            <div style="display: flex; align-items: center; height: 30vh">
+                <el-tag effect="dark">
+                    <a :href="resultPath" target="_blank">打开文件所在位置</a>
+                </el-tag>
+            </div>
+
+        </el-aside>
+
+    </el-container>
+
+
+</div>
 
 </body>
 

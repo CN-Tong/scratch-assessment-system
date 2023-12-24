@@ -4,29 +4,42 @@ import cv2
 import math
 import copy
 from RANSAC import *
+import matplotlib.pyplot as plt
 import random
 from sklearn.metrics import mean_squared_error
 
 
 class Detection():
-    def __init__(self, image_path, T1=10, T2=2, T3=60, T4=5, m=1, n=1):
+    def __init__(self, image_path, T1=40, T2=3, T3=40, T4=32, m=20, n=20):
         self.T1 = T1
         self.T2 = T2
         self.T3 = T3
         self.T4 = T4
+        self.m = m
+        self.n = n
         self.src_image = cv2.imread(image_path, 0)
         self.image_info = self.src_image.shape
         self.image_height = self.image_info[0]
         self.image_width = self.image_info[1]
-        if T1:
-            T1_add = 0
-            n1 = int(self.image_width / n)
-            n2 = int(self.image_height / m)
-            for i in range(n1):
-                for j in range(n2):
-                    T1_add += self.src_image[m * j, n * i]
-            self.T1 += T1_add / (n1 * n2)
-            self.T4 += T1_add / (n1 * n2)
+
+        # hist, bins, _ = plt.hist(self.src_image.ravel(), 256, [0, 255])
+        # max_index = np.argmax(hist)
+        # print(max_index)
+        # self.T1 = max_index + T1
+        # self.T4 = max_index + T4
+
+        # if T1:
+        #     T1_add = 0
+        #     n1 = int(self.image_width / n)
+        #     n2 = int(self.image_height / m)
+        #     for i in range(n1):
+        #         for j in range(n2):
+        #             T1_add += self.src_image[m * j, n * i]
+        #     T1_add /= (n1 * n2)
+        #     T1_add = int(T1_add)
+        #     print(T1_add)
+        #     self.T1 += T1_add
+        #     self.T4 += T1_add
 
     """Rules of coarse detection"""
     """
@@ -36,13 +49,12 @@ class Detection():
     """
 
     def judge(self, lc, ll, lr):
-        if (lc > self.T1):
-            if ((lc > (ll + self.T2)) and ((lc > (lr + self.T2)))):
-                if (abs(int(ll) - int(lr)) < self.T3):
-                    if ((ll > self.T4) or (lr > self.T4)):
+        if lc > self.T1:
+            if (lc > (ll + self.T2)) and (lc > (lr + self.T2)):
+                if abs(int(ll) - int(lr)) < self.T3:
+                    if (ll > self.T4) or (lr > self.T4):
                         return False
         return True
-
 
     # def point_to_line(self, point_x, point_y, line_x0, line_y0, line_x1, line_y1):
     #     A = (line_y0-line_y1)/(line_x1*line_y0-line_x0*line_y1)
@@ -67,14 +79,14 @@ class Detection():
         :param g: 允许的最大线段间隙
         :return:
         """
-        k1 = (line_1[3] - line_1[1]) / -(line_1[2] - line_1[0]+0.0001)
-        k2 = (line_2[3] - line_2[1]) / -(line_2[2] - line_2[0]+0.0001)
+        k1 = (line_1[3] - line_1[1]) / -(line_1[2] - line_1[0] + 0.0001)
+        k2 = (line_2[3] - line_2[1]) / -(line_2[2] - line_2[0] + 0.0001)
         angle = math.atan((k1 - k2) / (1 + k1 * k2))
         if angle <= theta:
-            line1_center_x = (line_1[0]+line_1[2])/2
-            line1_center_y = (line_1[1]+line_1[3])/2
-            line2_center_x = (line_2[0]+line_2[2])/2
-            line2_center_y = (line_2[1]+line_2[3])/2
+            line1_center_x = (line_1[0] + line_1[2]) / 2
+            line1_center_y = (line_1[1] + line_1[3]) / 2
+            line2_center_x = (line_2[0] + line_2[2]) / 2
+            line2_center_y = (line_2[1] + line_2[3]) / 2
             A12 = (line_2[1] - line_2[3]) / (- line_2[2] * line_2[1] + line_2[0] * line_2[3])
             B12 = (line_2[2] - line_2[0]) / (- line_2[2] * line_2[1] + line_2[0] * line_2[3])
             d12 = (line1_center_x * A12 + line1_center_y * B12 - 1) / (np.sqrt(A12 ** 2 + B12 ** 2))
@@ -176,7 +188,7 @@ class Detection():
 
     def get_ROI_drop(self, min_point, max_point, point):
         drop_index = []
-        k = (max_point[3] - min_point[1]) / (max_point[2] - min_point[0]+0.0001)
+        k = (max_point[3] - min_point[1]) / (max_point[2] - min_point[0] + 0.0001)
         center_x = (max_point[2] - min_point[0]) / 2
         center_y = (max_point[3] - min_point[1]) / 2
         angle = math.atan(k)
@@ -265,7 +277,7 @@ class Detection():
             y0 = int(dline[1])
             x1 = int(dline[2])
             y1 = int(dline[3])
-            cv2.line(temp1, (x0, y0), (x1, y1), (0, 0, 255), 2)
+            cv2.line(temp1, (x0, y0), (x1, y1), (0, 0, 255), 1)
         cv2.imwrite(f'{fine_detection_name}/fld.jpg', temp1)
         # 去除长度小于阈值的直线段
         # for line_point in line_result:
@@ -305,22 +317,23 @@ class Detection():
             for merge_point in merge_points:
                 line_length = int(np.sqrt((merge_point[0] - merge_point[2]) ** 2
                                           + (merge_point[1] - merge_point[3]) ** 2))
-                if line_length <= 10 and len(merge_points) <= 4:
+                if line_length <= 20 and len(merge_points) <= 6:
                     merge_points.remove(merge_point)
         print('merge_result_group_num:', len(merge_result))
         # merge_result嵌套关系为[[[x0, y0, x1, y1], ...], ...]
-        merge = np.zeros(np.shape(binary_imageRGB))
-        temp2 = enhancement.copy()
+        # merge = np.zeros(np.shape(binary_imageRGB))
+        merge = binary_imageRGB.copy()
+        temp2 = np.zeros(enhancement.shape)
         for group in merge_result:
             for line_in_group in group:
                 x0 = int(line_in_group[0])
                 y0 = int(line_in_group[1])
                 x1 = int(line_in_group[2])
                 y1 = int(line_in_group[3])
-                cv2.line(merge, (x0, y0), (x1, y1), (0, 0, 255), 2, cv2.LINE_AA)
-                cv2.line(temp2, (x0, y0), (x1, y1), (0, 0, 255), 2, cv2.LINE_AA)
-        cv2.imwrite(f'{fine_detection_name}/merge.jpg', merge)
-        cv2.imwrite(f'{fine_detection_name}/result.jpg', temp2)
+                cv2.line(merge, (x0, y0), (x1, y1), (0, 0, 255), 1, cv2.LINE_AA)
+                cv2.line(temp2, (x0, y0), (x1, y1), (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.imwrite(f'{fine_detection_name}/binaryResult.jpg', merge)
+        cv2.imwrite(f'{fine_detection_name}/forEvaluateResult.jpg', temp2)
 
         """step2：根据第一步的结果设置ROI区域并将区域外点和线段丢弃"""
         # print("step 2")
@@ -401,7 +414,7 @@ class Detection():
         #             j = int(np.polyval(function, i))
         #             cv2.circle(temp3, (i, j), 1, (255, 0, 0), -1)
         #
-        # cv2.imwrite(f'{fine_detection_name}_fit.png', temp3)
+        # cv2.imwrite(f'{fine_detection_name}/fitResult.jpg', temp3)
 
         '''step6:Ransac多项式拟合'''
         # print("step 6")
@@ -434,7 +447,6 @@ class Detection():
         #         cv2.circle(temp4, (fit_x[i], fit_y[i]), 1, (0, 0, 255), -1)
         #
         # cv2.imwrite(f'{fine_detection_name}_fitRansac.bmp', temp4)
-
 
     def fit_curve_ransac(self, x, y, initial, end, k, threshold, deg):
         best_model = None
@@ -478,7 +490,6 @@ class Detection():
 
         return x, fit_y
 
-
 # path = '../img'
 # path = 'D:\image'
 # srcName = '/eh'
@@ -489,4 +500,3 @@ class Detection():
 # detection = Detection(path + srcName + srcType, T1, T2, T3, T4)
 # detection.Coarse_Detection(path + srcName + 'Coarse.jpg', scratchWide)
 # detection.Fine_Detection(path + srcName + 'Coarse.jpg', path + srcName + srcType, path + srcName, theta, d, g)
-

@@ -45,14 +45,16 @@ def acquireImage():
 def detectScratch():
     print('start scratch detection')
 
-    T1, T2, T3, T4 = 5, 1, 60, 5
+    '''T1和T4最终当硬件确定后，选择最合适的曝光参数'''
+    T1, T2, T3, T4 = 45, 5, 40, 40
+    '''细划痕scratchWide取3，粗划痕scratchWide取4'''
     scratchWide = 3
     theta, d, g = 10, 3, 20
     detection = Detection(backendPath + '/eh.jpg', T1, T2, T3, T4)
     detection.Coarse_Detection(backendPath + '/coarse.jpg', scratchWide)
     detection.Fine_Detection(backendPath + '/coarse.jpg', backendPath + '/eh.jpg', backendPath, theta, d, g)
 
-    return frontendPath + '/result.jpg'
+    return frontendPath + '/binaryResult.jpg'
 
 
 @app.route('/scratch/evaluate', methods=['POST'])
