@@ -1,1 +1,167 @@
-<!DOCTYPE html><html><head>    <!-- 页面meta -->    <meta charset="utf-8">    <meta http-equiv="X-UA-Compatible" content="IE=edge">    <title>角膜塑形镜表面划痕智能评估系统</title>    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">    <!-- 引入样式 -->    <link rel="stylesheet" href="../plugins/elementui/index.css">    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">    <link rel="stylesheet" href="../css/style.css"></head><body class="hold-transition"><div id="app">    <div class="content-header">        <h1 style="text-align: center;font-size: 32px">角膜塑形镜表面划痕智能评估系统</h1>    </div>    <div class="app-container">        <div class="box">                        <div style="display: flex; justify-content: space-between;">                <img src="../images/original.bmp" style="width: 40%; margin-left: 8%">                <img src="../images/result.bmp" style="width: 40%; margin-right: 8%">            </div>        </div>    </div>    <el-container>        <el-aside width="20%">            <div style="margin-left: 60%">                <el-button @click="acquireImage()" type="warning" round style="font-size: 16px">采集图像</el-button>            </div>            <br>            <div style="margin-left: 60%">                <el-button @click="detectScratch()" type="warning" round style="font-size: 16px">划痕检测</el-button>            </div>            <br>            <div style="margin-left: 60%">                <el-button @click="evaluateOkLens()" type="warning" round style="font-size: 16px">结果评估</el-button>            </div>        </el-aside>        <el-main style="background-color: #fff;">            <div style="display: flex; width: 90%; padding-left: 5%">                <el-tag style="font-size: 16px">划痕总覆盖率</el-tag>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                <el-progress :stroke-width="30" :percentage="70" :show-text="false" style="flex: 1;"></el-progress>            </div>            <br>            <div style="display: flex; width: 90%; padding-left: 5%">                <el-tag type="success" style="font-size: 16px">最大划痕覆盖率</el-tag>&nbsp;&nbsp;&nbsp;&nbsp;                <el-progress :stroke-width="30" :percentage="70" :show-text="false" style="flex: 1;" status="success"></el-progress>            </div>            <br>            <div style="display: flex; width: 90%; padding-left: 5%">                <el-tag type="danger" style="font-size: 16px">最大划痕相对长度</el-tag>&nbsp;                <el-progress :stroke-width="30" :percentage="70" :show-text="false" style="flex: 1;"></el-progress>            </div>            <br>            <div style="display: flex; width: 50%; padding-left: 46%">                <el-button type="danger" round style="font-size: 24px">1级</el-button>            </div>        </el-main>        <el-aside width="20%">            <div style="display: flex; align-items: center; height: 20vh">                <el-button type="warning" round style="font-size: 16px">保存图片<i class="el-icon-download"></i></el-button>            </div>        </el-aside>    </el-container></div></body><!-- 引入组件库 --><script src="../js/vue.js"></script><script src="../plugins/elementui/index.js"></script><script type="text/javascript" src="../js/jquery.min.js"></script><script src="../js/axios-0.18.0.js"></script><script>    var vue = new Vue({        el: '#app',        data: {            dataList: [],//当前页要展示的列表数据            grade:1,        },        //钩子函数，VUE对象初始化完成后自动执行        // created() {        //     this.getAll();        // },        methods: {            acquireImage(){                const backendUrl = 'http://127.0.0.1:5000';                axios.post(backendUrl + "/scratch/acquire").then((res) => {                });            },            detectScratch(){                const backendUrl = 'http://127.0.0.1:5000';                axios.post(backendUrl + "/scratch/detect").then((res) => {                });            },            evaluateOkLens(){                axios.post("/scratch/evaluate").then((res) => {                    this.grade = res.data;                });            },        }    })</script></html>
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <!-- 页面meta -->
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>角膜塑形镜表面划痕智能评估系统</title>
+
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <!-- 引入样式 -->
+
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body class="hold-transition">
+
+    <div id="app">
+
+        <div class="content-header">
+
+            <h1 style="text-align: center;font-size: 32px">角膜塑形镜表面划痕智能评估系统</h1>
+
+        </div>
+
+        <div class="app-container">
+
+            <div class="box">
+
+                <div style="display: flex; justify-content: space-between;" v-bind:path="path">
+                    <img v-bind:src="path + '/original/0.bmp'" style="width: 35%; margin-left: 8%">
+
+                    <img v-bind:src="path + '/result/0.bmp'" style="width: 35%; margin-right: 8%">
+                </div>
+
+            </div>
+
+        </div>
+
+        <el-container>
+            <el-aside width="20%">
+
+                <div style="margin-left: 60%">
+                    <el-button @click="acquireImage()" type="warning" round style="font-size: 16px">采集图像</el-button>
+                </div>
+                <br>
+
+                <div style="margin-left: 60%">
+                    <el-button @click="detectScratch()" type="warning" round style="font-size: 16px">划痕检测</el-button>
+                </div>
+                <br>
+
+                <div style="margin-left: 60%">
+                    <el-button @click="evaluateOkLens()" type="warning" round style="font-size: 16px">结果评估</el-button>
+                </div>
+
+            </el-aside>
+
+            <el-main style="background-color: #fff;">
+
+                <div style="display: flex; width: 90%; padding-left: 5%">
+                    <el-tag style="font-size: 16px">划痕总覆盖率&emsp;&emsp;</el-tag>
+                    <el-progress :stroke-width="30" :percentage="50" :show-text="false" style="flex: 1;"></el-progress>
+                </div>
+                <br>
+
+                <div style="display: flex; width: 90%; padding-left: 5%">
+                    <el-tag type="success" style="font-size: 16px">最大划痕覆盖率&emsp;</el-tag>
+                    <el-progress :stroke-width="30" :percentage="40" :show-text="false" style="flex: 1;"
+                        status="success"></el-progress>
+                </div>
+                <br>
+
+                <div style="display: flex; width: 90%; padding-left: 5%">
+                    <el-tag type="danger" style="font-size: 16px">最大划痕相对长度</el-tag>
+                    <el-progress :stroke-width="30" :percentage="70" :show-text="false" style="flex: 1;"></el-progress>
+                </div>
+                <br>
+
+                <div style="display: flex; width: 50%; padding-left: 46%">
+                    <el-button type="danger" round style="font-size: 24px">1级</el-button>
+                </div>
+
+
+            </el-main>
+
+            <el-aside width="20%">
+
+                <div style="display: flex; align-items: center; height: 20vh">
+                    <el-tag effect="dark">
+                        <a v-bind:href="path" target="_blank">打开文件所在位置</a>
+                    </el-tag>
+                </div>
+
+            </el-aside>
+
+        </el-container>
+
+
+    </div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../js/vue.js"></script>
+
+<script src="../plugins/elementui/index.js"></script>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+
+<script src="../js/axios-0.18.0.js"></script>
+
+<script>
+
+    var vue = new Vue({
+
+        el: '#app',
+        data: {
+            path: "",
+            grade: 0,
+        },
+
+        //钩子函数，VUE对象初始化完成后自动执行
+        // created() {
+        //     this.getAll();
+        // },
+
+        methods: {
+            acquireImage() {
+                const backendUrl = 'http://127.0.0.1:5000';
+
+                axios.post(backendUrl + "/scratch/acquire").then((res) => {
+                    this.path = res.data;
+                });
+            },
+
+            detectScratch() {
+                const backendUrl = 'http://127.0.0.1:5000';
+
+                axios.post(backendUrl + "/scratch/detect").then((res) => {
+
+                });
+            },
+
+            evaluateOkLens() {
+                axios.post("/scratch/evaluate").then((res) => {
+                    this.grade = res.data;
+                });
+            },
+        }
+    })
+
+</script>
+
+</html>

@@ -12,7 +12,6 @@ from ImgEnhancement import ImgEnhancement
 app = Flask(__name__)
 CORS(app)  # 启用CORS，允许所有来源访问
 
-
 currentTime = 0
 path = ''
 
@@ -24,16 +23,16 @@ def acquireImage():
     imgAcquisition = ImgAcquisition()
     # 曝光时间1000ms
     currentTime = imgAcquisition.acquire(1000)
-    path = f'./results/{currentTime}'
+    path = f'./results/{currentTime}/original'
+    # path = f'./results/1703128491.525947'
 
-    # imgFusion = ImgFusion()
-    # imgFusion.fuse(path)
-    #
-    # imgEnhancement = ImgEnhancement()
-    # imgEnhancement.enhance(path)
+    imgFusion = ImgFusion()
+    imgFusion.fuse(path)
 
-    return "Image acquisition successful"
+    imgEnhancement = ImgEnhancement()
+    imgEnhancement.enhance(path)
 
+    return path
 
 
 @app.route('/scratch/detect', methods=['POST'])

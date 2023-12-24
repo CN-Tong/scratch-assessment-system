@@ -58,8 +58,8 @@ class ImgEnhancement:
     def tsmooth(self, img, lamda=0.01, sigma=3.0, sharpness=0.001):
         I = cv2.normalize(img.astype('float64'), None, 0.0, 1.0, cv2.NORM_MINMAX)
         x = np.copy(I)
-        wx, wy = ImgEnhancement.computeTextureWeights(x, sigma, sharpness)
-        S = ImgEnhancement.solveLinearEquation(I, wx, wy, lamda)
+        wx, wy = ImgEnhancement.computeTextureWeights(self, x, sigma, sharpness)
+        S = ImgEnhancement.solveLinearEquation(self, I, wx, wy, lamda)
         return S
 
 
@@ -96,7 +96,7 @@ class ImgEnhancement:
         tmp = cv2.resize(I, (50, 50), interpolation=cv2.INTER_AREA)
         tmp[tmp < 0] = 0
         tmp = tmp.real
-        Y = ImgEnhancement.rgb2gm(tmp)
+        Y = ImgEnhancement.rgb2gm(self, tmp)
 
         isBad = isBad * 1
         isBad = resize(isBad, (50, 50))
@@ -123,12 +123,12 @@ class ImgEnhancement:
 
         # Weight matrix estimation
         t_b = np.max(I, axis=2)
-        t_our = cv2.resize(ImgEnhancement.tsmooth(resize(t_b, (50, 50)), lamda, sigma),
+        t_our = cv2.resize(ImgEnhancement.tsmooth(self, resize(t_b, (50, 50)), lamda, sigma),
                            (t_b.shape[1], t_b.shape[0]), interpolation=cv2.INTER_AREA)
 
         # Apply camera model with k(exposure ratio)
         isBad = t_our < 0.5
-        J = ImgEnhancement.maxEntropyEnhance(I, isBad)
+        J = ImgEnhancement.maxEntropyEnhance(self, I, isBad)
 
         # W: Weight Matrix
         t = np.zeros((t_our.shape[0], t_our.shape[1], I.shape[2]))
@@ -148,5 +148,5 @@ class ImgEnhancement:
 
     def enhance(self, path):
         img = imageio.v2.imread(path + '/fusion.jpg')
-        result = ImgEnhancement.Ying_2017_CAIP(img)
+        result = ImgEnhancement.Ying_2017_CAIP(self, img)
         cv2.imwrite(path + '/eh.jpg', result)

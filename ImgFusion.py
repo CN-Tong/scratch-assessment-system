@@ -110,7 +110,7 @@ class ImgFusion:
         weightmap = contrastmap * Tmap
         print('weightmap finished!')
         for i in range(N):
-            weightmap[i, :, :] = ImgFusion.RF(weightmap[i, :, :], 100, 4, imgRGB1[i, :, :, :], 3)
+            weightmap[i, :, :] = ImgFusion.RF(self, weightmap[i, :, :], 100, 4, imgRGB1[i, :, :, :], 3)
         weightmap = weightmap + 10 ** (-10)
         weightmap = weightmap / np.tile(np.sum(weightmap, axis=0), (N, 1, 1))
         F = np.zeros((h - 1, w - 1, 3))
@@ -125,7 +125,7 @@ class ImgFusion:
 
 
     def fuse(self, path):
-        img, imgRGB = ImgFusion.getimage(self, path + '/original', 600, 900)
+        img, imgRGB = ImgFusion.getimage(self, path + '/original', 640, 850)
 
         '''winner_take_all或weighted_average两种方法'''
         fusionImage = ImgFusion.dSiftFusion(self, img, imgRGB, 32, weighted_average='weighted_average')
