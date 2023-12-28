@@ -39,9 +39,9 @@
         <div class="box">
 
             <div style="display: flex; justify-content: space-between;">
-                <img :src="fusionPath" style="width: 35%; margin-left: 8%">
+                <img :src="frontendPath + '/fusion.jpg'" style="width: 35%; margin-left: 8%">
 
-                <img :src="resultPath" style="width: 35%; margin-right: 8%">
+                <img :src="frontendPath + '/binaryResult.jpg'" style="width: 35%; margin-right: 8%">
             </div>
 
         </div>
@@ -132,8 +132,10 @@
 
         el: '#app',
         data: {
-            fusionPath: "",
-            resultPath: "",
+            // fusionPath: "",
+            // resultPath: "",
+            backendPath: "",
+            frontendPath: "",
             areaTotalRitio: "",
             maxAreaRitio: "",
             maxLengthRitio: "",
@@ -149,22 +151,36 @@
             acquireImage() {
                 const backendUrl = 'http://127.0.0.1:5000';
                 axios.post(backendUrl + "/scratch/acquire").then((res) => {
-                    this.fusionPath = res.data;
+                    this.frontendPath = res.data[0];
+                    this.backendPath = res.data[1];
                     refresh;
                 });
             },
 
             detectScratch() {
                 const backendUrl = 'http://127.0.0.1:5000';
-                axios.post(backendUrl + "/scratch/detect").then((res) => {
-                    this.resultPath = res.data;
+                axios.post(backendUrl + "/scratch/detect", {
+                    "backendPath": this.backendPath
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then((res) => {
                     refresh;
                 });
             },
 
             evaluateOkLens() {
                 const backendUrl = 'http://127.0.0.1:5000';
-                axios.post(backendUrl + "/scratch/evaluate").then((res) => {
+                axios.post(backendUrl + "/scratch/evaluate", {
+                    "backendPath": this.backendPath
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then((res) => {
                     this.areaTotalRitio = res.data[0];
                     this.maxAreaRitio = res.data[1];
                     this.maxLengthRitio = res.data[2];
